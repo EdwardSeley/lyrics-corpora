@@ -11,7 +11,7 @@ import nltk
 from nltk import word_tokenize
 
 
-# In[11]:
+# In[2]:
 
 
 def getLyricsFromWikia(artist, title):
@@ -33,7 +33,7 @@ def getLyricsFromWikia(artist, title):
         return None
 
 
-# In[2]:
+# In[3]:
 
 
 def getBillboardCorpus(totalWeeks=1):
@@ -68,7 +68,7 @@ def getBillboardCorpus(totalWeeks=1):
     return music_collection
 
 
-# In[3]:
+# In[4]:
 
 
 def getArtistCorpus(artist):
@@ -89,7 +89,7 @@ def getArtistCorpus(artist):
     return artistCorpus
 
 
-# In[4]:
+# In[5]:
 
 
 def getAlbums(artist):
@@ -107,7 +107,7 @@ def getAlbums(artist):
     return albums
 
 
-# In[5]:
+# In[6]:
 
 
 def getSongs(album):
@@ -128,7 +128,7 @@ def getSongs(album):
     
 
 
-# In[6]:
+# In[7]:
 
 
 def corpusToString(corpus):
@@ -139,44 +139,37 @@ def corpusToString(corpus):
     return lyrics
 
 
-# In[7]:
-
-
-with open("DrakeText.txt", "r") as file:
-    drakeLyrics = file.read()
-tokens = word_tokenize(drakeLyrics)
-drakeText = nltk.Text(tokens)
-
-
 # In[8]:
 
 
-with open("WeekndText.txt", "r") as file:
-    weekndLyrics = file.read()
-tokens = word_tokenize(weekndLyrics)
-weekndText = nltk.Text(tokens)
+def save(corpus, nameOfArtist):
+    with open("{}Text.txt".format(nameOfArtist), "w") as file:
+        file.write(corpus)
 
 
 # In[9]:
 
 
-fdist1 = nltk.FreqDist(weekndText)
+def retrieve(nameOfArtist):
+    with open("{}Text.txt".format(nameOfArtist), "r") as file:
+        lyrics = file.read()
+    return lyrics
 
 
 # In[10]:
 
 
-fdist2 = nltk.FreqDist(drakeText)
+def process(lyrics):
+    tokens = word_tokenize(lyrics)
+    text = nltk.Text(tokens)
+    return text
 
 
 # In[11]:
 
 
-nltk.FreqDist([len(w) for w in drakeText]).plot(15)
-
-
-# In[12]:
-
-
-nltk.FreqDist([len(w) for w in weekndText]).plot(15)
+def keyWords(corpus):
+    fdist = nltk.FreqDist(corpus);
+    keyWords = [keyWord for keyWord in set(corpus) if fdist[keyWord] > 25 and len(keyWord) > 7] #targets frequent words and filters out articles
+    return keyWords
 
