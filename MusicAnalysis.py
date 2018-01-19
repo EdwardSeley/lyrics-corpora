@@ -1,6 +1,18 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
 import billboard
 import requests
 from bs4 import BeautifulSoup
+import nltk
+from nltk import word_tokenize
+
+
+# In[11]:
+
 
 def getLyricsFromWikia(artist, title):
     try:
@@ -19,6 +31,10 @@ def getLyricsFromWikia(artist, title):
         return lyricBox.text.strip()
     except:
         return None
+
+
+# In[2]:
+
 
 def getBillboardCorpus(totalWeeks=1):
     songIndex = 0
@@ -51,6 +67,10 @@ def getBillboardCorpus(totalWeeks=1):
         chart = billboard.ChartData('hot-100', chart.previousDate)
     return music_collection
 
+
+# In[3]:
+
+
 def getArtistCorpus(artist):
     artistCorpus = {}
     for album in getAlbums(artist):
@@ -68,6 +88,10 @@ def getArtistCorpus(artist):
                 continue
     return artistCorpus
 
+
+# In[4]:
+
+
 def getAlbums(artist):
     BASE_URL = "http://lyrics.wikia.com/wiki/{}".format(artist)
     page = requests.get(BASE_URL)
@@ -82,28 +106,77 @@ def getAlbums(artist):
             albums.append( (albumTitle, "https://lyrics.wikia.com{0}".format(link["href"])))
     return albums
 
+
+# In[5]:
+
+
 def getSongs(album):
     link = album[1]
     page = requests.get(link)
     soup = BeautifulSoup(page.content, "html.parser")
     content = soup.find("div", {"class":"mw-content-text"})
-    if content is not None:
-    trackListBox = content.find("ol")
-    songItems = trackListBox.findAll("li")
     songs = []
-    for songItem in songItems:
-        songLink = songItem.find("a")
-        title = songLink.string
-        url = "http://lyrics.wikia.com{0}".format(songLink["href"])
-        songs.append((title, url))
+    if content is not None:
+        trackListBox = content.find("ol")
+        songItems = trackListBox.findAll("li")
+        for songItem in songItems:
+            songLink = songItem.find("a")
+            title = songLink.string
+            url = "http://lyrics.wikia.com{0}".format(songLink["href"])
+            songs.append((title, url))
     return songs
     
-billboardCorpus = getBillboardCorpus(totalWeeks=2)
-drakeCorpus = getArtistCorpus("Drake")
 
-drakeLyrics = ""
-for album in drakeCorpus.keys():
-    for song in drakeCorpus[album]:
-        drakeLyrics += drakeCorpus[album][song]
 
+# In[6]:
+
+
+def corpusToString(corpus):
+    lyrics = ""
+    for album in corpus.keys():
+        for song in corpus[album]:
+            lyrics += corpus[album][song]
+    return lyrics
+
+
+# In[7]:
+
+
+with open("DrakeText.txt", "r") as file:
+    drakeLyrics = file.read()
+tokens = word_tokenize(drakeLyrics)
+drakeText = nltk.Text(tokens)
+
+
+# In[8]:
+
+
+with open("WeekndText.txt", "r") as file:
+    weekndLyrics = file.read()
+tokens = word_tokenize(weekndLyrics)
+weekndText = nltk.Text(tokens)
+
+
+# In[9]:
+
+
+fdist1 = nltk.FreqDist(weekndText)
+
+
+# In[10]:
+
+
+fdist2 = nltk.FreqDist(drakeText)
+
+
+# In[11]:
+
+
+nltk.FreqDist([len(w) for w in drakeText]).plot(15)
+
+
+# In[12]:
+
+
+nltk.FreqDist([len(w) for w in weekndText]).plot(15)
 
