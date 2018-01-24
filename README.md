@@ -1,6 +1,12 @@
 # Lyrics Corpora
 This Python API allows users to create a corpus of lyrical data from their favorite artist, genre, or billboard charts. This API differentiates itself from others similar to it by retrieving lyrics from songs and artists through searches (thereby allowing variation in name) and by allowing users to get collections of music from genres and billboard charts instead of just individual songs or artist discographies.  
 
+
+## Install 
+
+```python
+pip install lyricscorpora
+```
 ## Usage
 
 ### Getting lyrics from a song
