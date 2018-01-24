@@ -1,9 +1,9 @@
 from setuptools import setup
 
-long_description = open('README.md').read()
+#long_description = open('README.md').read()
 
 setup(
-    name='lyrics-corpora',
+    name='lyricscorpora',
     version='0.0.1',
     description='Lyrics API',
     long_description=long_description,
@@ -12,7 +12,7 @@ setup(
     author='Edward Seley',
     author_email='edwardseley@gmail.com',
     license='No license',
-    py_modules=['lyrics-corpora'],
+    py_modules=['lyricscorpora'],
     classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
@@ -24,7 +24,7 @@ setup(
     keywords='lyrics LyricWikia music billboard songs scrape',
     entry_points={
         'console_scripts': [
-            'lyrics-corpora=lyrics-corpora:main',
+            'lyricscorpora=lyricscorpora:main',
         ],
     },
 )
