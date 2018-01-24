@@ -4,10 +4,10 @@ from setuptools import setup
 
 setup(
     name='lyricscorpora',
-    version='0.0.2',
+    version='0.0.3',
     description='Lyrics API',
     long_description='Lyrics API',
-    install_requires=['billboard', 'requests', 'bs4'],
+    install_requires=['billboard.py', 'requests', 'bs4'],
     url='https://github.com/edwardseley/lyrics-corpora',
     author='Edward Seley',
     author_email='edwardseley@gmail.com',
