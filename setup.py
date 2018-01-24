@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='lyricscorpora',
-    version='0.0.1',
+    version='0.0.2',
     description='Lyrics API',
     long_description='Lyrics API',
     install_requires=['billboard', 'requests', 'bs4'],
