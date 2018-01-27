@@ -63,3 +63,6 @@ genre.getArtistList()
 genre.getSongList()
 [out]: "Finesse (remix)", "Skywalker", "Pills & Automobiles"...
 ```
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details
