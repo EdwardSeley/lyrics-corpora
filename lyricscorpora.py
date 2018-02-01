@@ -197,10 +197,11 @@ class Song:
 
 class Billboard:
     
-    def __init__(self, totalWeeks=1, chart=billboard.ChartData('hot-100')):
+    def __init__(self, totalWeeks=1, chartName='hot-100'):
         self.songList = []
         songIndex = 0
         weekNum = 0
+        chart=billboard.ChartData(chartName)
         while (weekNum < totalWeeks):
             while (songIndex < len(chart.entries)):
                 chartSong = chart[songIndex]
