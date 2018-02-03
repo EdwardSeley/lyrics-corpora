@@ -1,7 +1,8 @@
 """
-Get lyrics from your favorite songs, artists, genres, and billboard charts! This is a WikiaLyrics API, 
-but distinguishes itself from others like it (eg. lyric-api) because it searches for the artist and song through 
-the lyrics.wikia.com website, thereby allowing for variations in the song or artist's name.
+Get lyrics from your favorite songs, artists, genres, and billboard charts! 
+This is a WikiaLyrics API, but distinguishes itself from others like it (eg. lyric-api) 
+because it searches for the artist and song through the lyrics.wikia.com website, 
+thereby allowing for variations in the song or artist's name.
 """
 
 import billboard
@@ -12,13 +13,13 @@ import argparse
 GENRE_LIST = ["r-b-hip-hop", "country", "rock", "latin", "dance-electronic", "christian", "gospel"]
 SEARCH_URL = "http://lyrics.wikia.com/wiki/Special:Search?search={0}:{1}"
 BASE_URL = "http://lyrics.wikia.com/{0}"
-MAIN_ARTIST_CUT_OFFS = [" Featuring", " x ", " X ", " Duet With ", " &", ","] #finds artist name by extracting string before cutoff
+MAIN_ARTIST_CUT_OFFS = [" Featuring", " x ", " X ", " Duet With ", " &", ","]  # separates main artists from features
 
 
 class Artist:
     
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, artistName):
+        self.name = artistName
         self.albumList = None
     
     def get_name(self):
@@ -26,7 +27,7 @@ class Artist:
     
     def get_album_list(self):
         if self.albumList is None:
-            page = requests.get(BASE_URL.format(artist.get_name()))
+            page = requests.get(BASE_URL.format(self.get_name()))
             soup = BeautifulSoup(page.content, "html.parser")
             headlines = soup.findAll("span", {"class", "mw-headline"})
             albumList = []
@@ -35,7 +36,7 @@ class Artist:
                 if link is not None:
                     title = link["title"]
                     albumTitle = title[title.find(":")+1:title.find(" (")]
-                    album = Album(albumTitle, artist, BASE_URL.format(link["href"]))
+                    album = Album(albumTitle, self, BASE_URL.format(link["href"]))
                     albumList.append(album)
             self.albumList = albumList
         return self.albumList
@@ -78,10 +79,10 @@ class Artist:
     
 class Album:
     
-    def __init__(self, name, artist, link=None):
-        self.name = name
-        self.artist = artist
-        self.link = link
+    def __init__(self, albumName, artistName, albumLink=None):
+        self.name = albumName
+        self.artist = artistName
+        self.link = albumLink
         self.songList = []
             
     def get_artist(self):
@@ -92,7 +93,7 @@ class Album:
             link = self.get_link()
             page = requests.get(link)
             soup = BeautifulSoup(page.content, "html.parser")
-            content = soup.find("div", {"class":"mw-content-text"})
+            content = soup.find("div", {"class": "mw-content-text"})
             if content is not None:
                 trackListBox = content.find("ol")
                 songItems = trackListBox.findAll("li")
@@ -121,34 +122,34 @@ class Album:
     
 class Song:
     
-    def __init__(self, title, lyrics=None, link=None, artist=None):
-        self.title = title
-        self.lyrics = lyrics
-        self.link = link
-        if type(artist) is str:
-            self.artist = Artist(artist)
+    def __init__(self, songTitle, songLyrics=None, songLink=None, songArtist=None):
+        self.title = songTitle
+        self.lyrics = songLyrics
+        self.link = songLink
+        if type(songArtist) is str:
+            self.artist = Artist(songArtist)
         else:
-            self.artist = artist
+            self.artist = songArtist
     
     def get_artist(self):
         return self.artist
     
-    def set_artist(self, artist):
-        self.artist = artist
+    def set_artist(self, songArtist):
+        self.artist = songArtist
         
     def get_title(self):
         return self.title
     
-    def set_lyrics(self, lyrics):
-        self.lyrics = lyrics
+    def set_lyrics(self, songLyrics):
+        self.lyrics = songLyrics
         
     def get_lyrics(self):
         if self.lyrics is None:
-            self.lyrics = get_lyrics(song)
+            self.lyrics = get_lyrics(self)
         return self.lyrics
     
-    def set_link(self, link):
-        self.link = link
+    def set_link(self, songLink):
+        self.link = songLink
     
     def get_link(self):
         return self.link
@@ -169,7 +170,7 @@ class Billboard:
         self.songList = []
         songIndex = 0
         weekNum = 0
-        chart=billboard.ChartData(chartName)
+        chart = billboard.ChartData(chartName)
         while (weekNum < totalWeeks):
             while (songIndex < len(chart.entries)):
                 chartSong = chart[songIndex]
@@ -177,7 +178,7 @@ class Billboard:
                 for cut_off in MAIN_ARTIST_CUT_OFFS:
                     if cut_off in artistName:
                         artistName = artistName[:artistName.find(cut_off)]
-                song = Song(title=chartSong.title, artist=artistName)
+                song = Song(songTitle=chartSong.title, songArtist=artistName)
                 if song not in self.songList:
                     self.songList.append(song)
                 songIndex += 1
@@ -192,14 +193,14 @@ class Billboard:
         return set([song.get_artist() for song in self.songList])
     
     def __len__(self):
-        return len(songList)
+        return len(self.songList)
 
     
 class Genre:
     
     def __init__(self, genre):
         if genre not in GENRE_LIST:
-            raise Exception('genre, {0} is not in the accepted genre list. Please use getGenreList() to find acceptable genres. '.format(genre))
+            raise Exception('genre, {0} is not in the genre list. Use get_genre_list() to find genres. '.format(genre))
         chart = billboard.ChartData('{0}-songs'.format(genre))
         billboardChart = Billboard(104, chart)
         self.artistList = billboardChart.get_artist_list()
@@ -210,7 +211,8 @@ class Genre:
     
     def get_song_list(self):
         return self.songList
-    
+
+    @staticmethod
     def get_genre_list(self):
         return GENRE_LIST
 
@@ -236,42 +238,37 @@ def get_lyrics(song):
         return lyrics
     except:
         return None
-    
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Get lyrics from your favorite songs, artists, genres, and billboard charts!")
-    
-    parser.add_argument(
-    "-a", "--artist",
-    help="Specify the artist's name",
-    required=False
-    )
-    parser.add_argument(
-    "-t", "--title",
-    help="Specify the song's title",
-    required=False
-    )
-    parser.add_argument(
-    "-g", "--genre",
-    help="Specify the genre of lyrics you would like to receive",
-    required=False
-    )
-    parser.add_argument(
-    "-gl", "--genrelist",
-    help="Returns a list of the genres from which you can retrieve a corpus of lyrics",
-    required=False,
-    action='store_true'
-    )
-    parser.add_argument(
-    "-b", "--billboardchart",
-    help="Specify the number of weeks for the billboard charts",
-    required=False
-    )
+    parser = argparse.ArgumentParser(description="Get lyrics from your favorite artists, genres, and billboard charts!")
+    parser.add_argument("-a", "--artist",
+                        help="Specify the artist's name",
+                        required=False
+                        )
+    parser.add_argument("-t", "--title",
+                        help="Specify the song's title",
+                        required=False
+                        )
+    parser.add_argument("-g", "--genre",
+                        help="Specify the genre of lyrics you would like to receive",
+                        required=False
+                        )
+    parser.add_argument("-gl", "--genrelist",
+                        help="Returns a list of the genres from which you can retrieve a corpus of lyrics",
+                        required=False,
+                        action='store_true'
+                        )
+    parser.add_argument("-b", "--billboardchart",
+                        help="Specify the number of weeks for the billboard charts",
+                        required=False
+                        )
     
     args = parser.parse_args()
     
     if args.artist:
         if args.title:
-            print(get_lyrics( Song(args.title, Artist(args.artist) )))
+            print(get_lyrics(Song(args.title, Artist(args.artist))))
         else:
             print(Artist(args.artist).get_lyrics())
     elif args.genre:
