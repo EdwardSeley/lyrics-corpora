@@ -24,47 +24,52 @@ optional arguments:
 ```
 ## Usage
 
+### Getting module
+```python
+import lyricscorpora as lc
+```
+
 ### Getting lyrics from a song
 ```python
-song = Song("The Weeknd", "Wicked Games")
-getLyrics(song)
+song = lc.Song("The Weeknd", "Wicked Games")
+lc.get_lyrics(song)
 [out]: I left my girl back home...
 ```
 
 ### Getting artist info
 ```python
-artist = Artist("Drake")
-albumList = artist.getAlbumList()
+artist = lc.Artist("Drake")
+albumList = artist.get_album_list()
 print(albumList)
 [out]: "Room for Improvement (2006)", "Comeback Season (2007)", ... "Scary Hours (2018)"
 album = albumList[6]
 print(album)
 [out]: "Scary Hours (2018)"
-songList = album.getSongList()
+songList = album.get_song_list()
 print(songList)
 [out]: "God's Plan", "Diplomatic Immunity"
 song = songList[1]
-song.getLyrics()
+song.get_lyrics()
 [out]: "Yeah they wishin' and wishin' and wishin' and wishin'..."
 
 ```
 ### Getting artist corpus
 ```python
-artist = Artist("Drake")
-artist.getLyrics() #gets the lyrics to every song from every album by the artist
+artist = lc.Artist("Drake")
+artist.get_lyrics() #gets the lyrics to every song from every album by the artist
 [out]: "You see the difference between me and you..."
 ```
 
 ### Getting lyrics from Billboard charts
 ```python
-billboardChart = Billboard(52) #Gets song information from every song on the charts for the past 52 weeks
-songList = billboardChart.getSongList()
+billboardChart = lc.Billboard(52) #Gets song information from every song on the charts for the past 52 weeks
+songList = billboardChart.get_song_list()
 print(songList)
 [out]: "Havana, Perfect, Rockstar, .."
 song = songList[0]
-print(song.getLyrics)
+print(song.get_lyrics)
 [out]: "Havana, ooh na-na (ay)"
-artist = song.getArtist()
+artist = song.get_artist()
 print("Camila Cabello")
 ```
 
@@ -72,10 +77,10 @@ print("Camila Cabello")
 ```python
 GENRE_LIST = ["r-b-hip-hop", "country", "rock", "latin", "dance-electronic", "christian", "gospel"]
 ...
-genre = Genre("r-b-hip-hop") #Gets the songs for the genre's top 50 songs for the past 2 years (must be from GENRE_LIST) 
-genre.getArtistList()
+genre = lc.Genre("r-b-hip-hop") #Gets the songs for the genre's top 50 songs for the past 2 years (must be from GENRE_LIST) 
+genre.get_artist_list()
 [out]: "Bruno Mars & Cardi B", "Miguel", "Chris Brown"...
-genre.getSongList()
+genre.get_song_list()
 [out]: "Finesse (remix)", "Skywalker", "Pills & Automobiles"...
 ```
 
