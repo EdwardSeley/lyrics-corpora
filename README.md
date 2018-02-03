@@ -7,6 +7,19 @@ This Python API allows users to create a corpus of lyrical data from their favor
 ```python
 pip install lyricscorpora
 ```
+
+## Command Line Interface
+```
+(C:\Users\seley\Anaconda3) C:\Users\seley>lyricscorpora --help                                                          
+usage: lyricscorpora [-h HELP] [-a ARTIST] [-t TITLE] [-g GENRE] [-gl GENRELIST] [-b BILLBOARDCHART]                                                                                                                                                                          
+Get lyrics from your favorite songs, artists, genres, and billboard charts!                                                              optional arguments:                                                                                                       
+-h, --help                          Show this help message and exit                                                                   
+-a ARTIST, --artist ARTIST          Specify the artist's name                                                                         
+-t TITLE, --title TITLE             Specify the song's title                                                                          
+-g GENRE, --genre GENRE             Specify the genre of lyrics you would like to receive                                             
+-gl, --genrelist                    Returns a list of the available genres to pull from                                    
+-b BILLBOARDCHART                   Specify the number of weeks for the billboard charts  
+```
 ## Usage
 
 ### Getting lyrics from a song
