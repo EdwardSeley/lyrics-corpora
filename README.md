@@ -12,7 +12,9 @@ pip install lyricscorpora
 ```
 (C:\Users\seley\Anaconda3) C:\Users\seley>lyricscorpora --help                                                          
 usage: lyricscorpora [-h HELP] [-a ARTIST] [-t TITLE] [-g GENRE] [-gl GENRELIST] [-b BILLBOARDCHART]                                                                                                                                                                          
-Get lyrics from your favorite songs, artists, genres, and billboard charts!                                                              optional arguments:                                                                                                       
+Get lyrics from your favorite songs, artists, genres, and billboard charts!
+
+optional arguments:                                                                                                       
 -h, --help                          Show this help message and exit                                                                   
 -a ARTIST, --artist ARTIST          Specify the artist's name                                                                         
 -t TITLE, --title TITLE             Specify the song's title                                                                          
