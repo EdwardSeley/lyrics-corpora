@@ -15,6 +15,8 @@ SEARCH_URL = "http://lyrics.wikia.com/wiki/Special:Search?search={0}:{1}"
 BASE_URL = "http://lyrics.wikia.com/{0}"
 MAIN_ARTIST_CUT_OFFS = [" Featuring", " x ", " X ", " Duet With ", " &", ","]  # separates main artists from features
 
+class NoLyricsException(Exception): 
+    pass
 
 class Artist:
     
@@ -26,7 +28,7 @@ class Artist:
         if self.album_list is None:
             page = requests.get(BASE_URL.format(self.name))
             soup = BeautifulSoup(page.content, "html.parser")
-            headlines = soup.findAll("span", {"class", "mw-headline"})
+            headlines = soup.find_all("span", {"class", "mw-headline"})
             album_list = []
             for headline in headlines:
                 link = headline.find("a")
@@ -50,13 +52,15 @@ class Artist:
                         page = requests.get(song.link)
                         soup = BeautifulSoup(page.content, 'html.parser')
                         lyric_box = soup.find('div', {'class': 'lyricbox'})
-                        for br in lyric_box.findAll('br'):
+                        if lyric_box is None:
+                            raise NoLyricsException("Could not find lyrics on song page")
+                        for br in lyric_box.find_all('br'):
                             br.replace_with('\n')
                         song_lyrics = lyric_box.text.strip()
-                        lyrics += song_lyrics
+                        lyrics.join(song_lyrics)
                         song.set_lyrics(song_lyrics)
                     else:
-                        lyrics += song.get_lyrics()
+                        lyrics.join(song.get_lyrics())
                 except:
                     continue
         return lyrics
@@ -187,17 +191,20 @@ def get_lyrics(song):
     url = SEARCH_URL.format(artist_name.replace(" ", "+"), title.replace(" ", "+"))
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
-    result_box = soup.find("li", {'class', 'result'})
-    if result_box is None:
-        return None
-    result_link = result_box.find("a", {'class', 'result-link'}, href=True)
-    result_url = result_link.get('href')
-    page = requests.get(result_url)
-    soup = BeautifulSoup(page.text, 'html.parser')
-    lyric_box = soup.find('div', {'class': 'lyricbox'})
-    for br in lyric_box.findAll('br'):
-        br.replace_with('\n')
-    lyrics = lyric_box.text.strip()
+    try:
+        result_box = soup.find("li", {'class', 'result'})
+        if result_box is None:
+            raise NoLyricsException("Could not find the lyrics page in the results list")
+        result_link = result_box.find("a", {'class', 'result-link'}, href=True)
+        result_url = result_link.get('href')
+        page = requests.get(result_url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        lyric_box = soup.find('div', {'class': 'lyricbox'})
+        for br in lyric_box.findAll('br'):
+            br.replace_with('\n')
+        lyrics = lyric_box.text.strip
+    except NoLyricsException:
+        lyrics = ""
     song.lyrics = lyrics
     return lyrics
 
